@@ -124,38 +124,66 @@
       }
     }
     header.site-head {
-      background: var(--card);
+      /* 暖纸底 + 双斜细织纹 + 细点砂 + 淡蜂巢 */
+      background-color: #f7f2e8;
+      background-image:
+        repeating-linear-gradient(
+          122deg,
+          transparent 0,
+          transparent 8px,
+          rgba(140, 110, 72, 0.045) 8px,
+          rgba(140, 110, 72, 0.045) 9px
+        ),
+        repeating-linear-gradient(
+          58deg,
+          transparent 0,
+          transparent 11px,
+          rgba(110, 85, 55, 0.035) 11px,
+          rgba(110, 85, 55, 0.035) 12px
+        ),
+        radial-gradient(rgba(122, 90, 55, 0.065) 0.55px, transparent 0.6px),
+        var(--hive-pattern-soft);
+      background-size: auto, auto, 14px 14px, 56px 97px;
+      background-position: 0 0, 3px 6px, 0 0, 18px 28px;
       border: 2px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.35rem 1.4rem 1.15rem;
+      padding: 1.75rem 1.4rem 1.15rem;
       margin-bottom: 0;
-      box-shadow: var(--shadow);
+      box-shadow:
+        var(--shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92),
+        inset 0 -1px 0 rgba(201, 164, 92, 0.08);
       position: relative;
       overflow: hidden;
     }
+    /* 顶缘蜂蜜滴落带（SVG 平铺，内容叠在上层） */
     header.site-head::before {
       content: "";
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
-      height: 72px;
-      background-image: var(--hive-pattern-soft);
-      background-size: 36px 62px;
-      opacity: 0.28;
+      top: 0;
+      height: clamp(22px, 4.2vw, 30px);
+      z-index: 0;
       pointer-events: none;
-      mask-image: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%2226%22%20viewBox%3D%220%200%20200%2026%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3c8%22%20stop-opacity%3D%220.75%22%2F%3E%3Cstop%20offset%3D%220.45%22%20stop-color%3D%22%23f0c14d%22%20stop-opacity%3D%220.55%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d4a02a%22%20stop-opacity%3D%220.4%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22shine%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220.35%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C4.5%20C188%2C4.5%20182%2C18%20172%2C11%20C162%2C5%20154%2C5%20146%2C12%20C138%2C20%20128%2C18%20120%2C10%20C112%2C4%20104%2C4%2096%2C11%20C88%2C19%2078%2C18%2070%2C10%20C62%2C4%2054%2C4%2046%2C12%20C38%2C20%2028%2C18%2020%2C10%20C12%2C4%204%2C5%200%2C4.5%20Z%22%2F%3E%3Cpath%20fill%3D%22url%28%23shine%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C3%20L0%2C3%20Z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: repeat-x;
+      background-size: 240px 100%;
+      background-position: top center;
+      filter: drop-shadow(0 3px 4px rgba(160, 110, 45, 0.12));
     }
+    /* 底缘淡蜜色收边（与顶带呼应） */
     header.site-head::after {
       content: "";
       position: absolute;
-      top: -40%;
-      right: -8%;
-      width: 140px;
-      height: 140px;
-      background: radial-gradient(circle, rgba(245, 230, 200, 0.9) 0%, transparent 70%);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 18px;
+      z-index: 0;
       pointer-events: none;
+      background: linear-gradient(to top, rgba(212, 160, 42, 0.14), rgba(255, 243, 200, 0.04) 55%, transparent);
+      border-radius: 0 0 calc(var(--radius) - 3px) calc(var(--radius) - 3px);
     }
     .head-hero {
       text-align: center;
@@ -167,34 +195,42 @@
       margin: 0 auto;
       max-width: 100%;
     }
-    /* 标题：Noto Sans SC Black(900) + 蜜色花字 + 两侧蜂蜜 emoji */
-    .title-plate {
+    /* 标题：胶囊底（两端半圆）+ 半透明上下渐变 */
+    .title-plate-wrap {
       display: inline-block;
       margin: 0 auto;
-      padding: 0.45rem 0.85rem 0.5rem;
+      max-width: 100%;
+      filter:
+        drop-shadow(0 3px 14px rgba(120, 85, 45, 0.12))
+        drop-shadow(0 0 0 1px rgba(201, 164, 92, 0.4));
+    }
+    .title-plate {
+      display: block;
+      margin: 0;
+      position: relative;
+      isolation: isolate;
+      padding: 0.65rem 1.4rem 0.7rem;
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(252, 238, 212, 0.55));
-      border: 1px solid rgba(201, 164, 92, 0.38);
-      box-shadow:
-        0 6px 24px rgba(120, 85, 45, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 rgba(201, 164, 92, 0.12);
+      background-image:
+        linear-gradient(180deg, rgba(255, 252, 240, 0.28) 0%, rgba(255, 255, 255, 0) 48%),
+        linear-gradient(
+          180deg,
+          rgba(248, 232, 200, 0.5) 0%,
+          rgba(240, 213, 154, 0.5) 48%,
+          rgba(228, 192, 110, 0.5) 100%
+        );
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
     }
     .main-title {
       margin: 0;
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
       gap: 0.35rem 0.45rem;
-    }
-    .title-honey-mark {
-      flex-shrink: 0;
-      font-size: clamp(1.35rem, 4vw, 1.75rem);
-      line-height: 1;
-      user-select: none;
-      filter: drop-shadow(0 2px 4px rgba(90, 65, 35, 0.1));
     }
     .title-text {
       font-family: var(--font-title);
@@ -203,29 +239,22 @@
       line-height: 1.15;
       letter-spacing: -0.03em;
       text-align: center;
-      color: #b8732a;
-      text-shadow:
-        0 1px 0 #fff8e8,
-        0 2px 0 rgba(217, 162, 74, 0.55),
-        0 3px 10px rgba(80, 55, 30, 0.14);
+      color: #a86a24;
+      text-shadow: none;
     }
     @supports ((-webkit-background-clip: text) or (background-clip: text)) {
       .title-text {
         background: linear-gradient(
-          168deg,
-          #fff9e8 0%,
-          #f4d078 28%,
-          #e09a28 58%,
-          #b86f1e 82%,
-          #7a4a18 100%
+          180deg,
+          #d9a84a 0%,
+          #c28f2e 42%,
+          #9e6e22 100%
         );
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
         text-shadow: none;
-        filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.65))
-          drop-shadow(0 2px 0 rgba(180, 120, 50, 0.22))
-          drop-shadow(0 4px 12px rgba(100, 70, 35, 0.12));
+        filter: none;
       }
     }
     .head-lead-area {
@@ -620,12 +649,12 @@
     <header class="site-head">
       <div class="head-hero">
         <div class="head-brand">
-          <div class="title-plate">
-            <h1 class="main-title">
-              <span class="title-honey-mark" aria-hidden="true">🍯</span>
-              <span class="title-text">蜂巢脚本生成器</span>
-              <span class="title-honey-mark" aria-hidden="true">🍯</span>
-            </h1>
+          <div class="title-plate-wrap">
+            <div class="title-plate">
+              <h1 class="main-title">
+                <span class="title-text">蜂巢脚本生成器</span>
+              </h1>
+            </div>
           </div>
         </div>
         <div class="head-lead-area">
