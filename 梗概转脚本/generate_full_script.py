@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 故事梗概 + 教研动效说明 xlsx → 完整五列脚本 xlsx。
-支持 Gemini / OpenAI / Anthropic Claude，见 --provider 与环境变量。
+支持 Gemini / OpenAI / Anthropic Claude / OpenAI 兼容（国内 DeepSeek、通义兼容模式等），见 --provider 与环境变量。
 """
 from __future__ import annotations
 
@@ -181,7 +181,14 @@ def call_gemini(api_key: str, model: str, prompt: str) -> str:
 
 
 def call_openai(api_key: str, model: str, prompt: str) -> str:
-    url = "https://api.openai.com/v1/chat/completions"
+    return call_openai_compatible(
+        api_key, model, prompt, "https://api.openai.com/v1"
+    )
+
+
+def call_openai_compatible(api_key: str, model: str, prompt: str, base_url: str) -> str:
+    base = base_url.rstrip("/")
+    url = f"{base}/chat/completions"
     body = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
@@ -195,11 +202,11 @@ def call_openai(api_key: str, model: str, prompt: str) -> str:
     if r.is_error:
         err = data.get("error", {}) if isinstance(data, dict) else {}
         msg = err.get("message", r.text)
-        raise RuntimeError(f"OpenAI 错误 {r.status_code}: {msg}")
+        raise RuntimeError(f"OpenAI 兼容接口错误 {r.status_code}: {msg}")
     try:
         return data["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as e:
-        raise RuntimeError(f"OpenAI 返回异常: {data}") from e
+        raise RuntimeError(f"OpenAI 兼容接口返回异常: {data}") from e
 
 
 def call_claude(api_key: str, model: str, prompt: str) -> str:
@@ -254,16 +261,24 @@ def write_output_xlsx(
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="梗概 + 教研 xlsx → 完整脚本 xlsx（Gemini / OpenAI / Claude）")
+    p = argparse.ArgumentParser(
+        description="梗概 + 教研 xlsx → 完整脚本 xlsx（Gemini / OpenAI / Claude / OpenAI 兼容）"
+    )
     p.add_argument("--synopsis", type=Path, required=True, help="故事梗概文本文件 utf-8")
     p.add_argument("--teaching", type=Path, required=True, help="教研动效说明 .xlsx")
     p.add_argument("--out", type=Path, default=None, help="输出 .xlsx")
     p.add_argument("--title", type=str, default="", help="课题名")
     p.add_argument(
         "--provider",
-        choices=("gemini", "openai", "claude"),
+        choices=("gemini", "openai", "claude", "openai_compat"),
         default="gemini",
-        help="API 服务商",
+        help="API 服务商；openai_compat 为 OpenAI 兼容（国内 DeepSeek、通义兼容模式等）",
+    )
+    p.add_argument(
+        "--base-url",
+        type=str,
+        default="",
+        help="OpenAI 兼容接口 Base URL（到 …/v1 或文档要求的路径，不含 /chat/completions）",
     )
     p.add_argument(
         "--model",
@@ -277,6 +292,7 @@ def main() -> None:
         "gemini": "gemini-2.0-flash",
         "openai": "gpt-4o-mini",
         "claude": "claude-sonnet-4-20250514",
+        "openai_compat": "deepseek-chat",
     }
     model = args.model.strip() or defaults[args.provider]
 
@@ -284,10 +300,16 @@ def main() -> None:
         "gemini": "GEMINI_API_KEY",
         "openai": "OPENAI_API_KEY",
         "claude": "ANTHROPIC_API_KEY",
+        "openai_compat": "OPENAI_COMPAT_API_KEY",
     }
     api_key = os.environ.get(env_keys[args.provider], "").strip()
+    if args.provider == "openai_compat" and not api_key:
+        api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
-        print(f"请设置环境变量 {env_keys[args.provider]}", file=sys.stderr)
+        hint = env_keys[args.provider]
+        if args.provider == "openai_compat":
+            hint += "（或未设置时可用 OPENAI_API_KEY）"
+        print(f"请设置环境变量 {hint}", file=sys.stderr)
         sys.exit(1)
 
     synopsis = read_synopsis(args.synopsis)
@@ -300,11 +322,21 @@ def main() -> None:
 
     title = args.title or args.teaching.stem
     prompt = build_prompt(title, synopsis, teaching)
+    if args.provider == "openai_compat":
+        base_url = (args.base_url or os.environ.get("OPENAI_COMPAT_BASE_URL", "")).strip()
+        if not base_url:
+            print(
+                "openai_compat 须提供 --base-url 或环境变量 OPENAI_COMPAT_BASE_URL",
+                file=sys.stderr,
+            )
+            sys.exit(1)
     print(f"调用 {args.provider}（{model}）…", file=sys.stderr)
     if args.provider == "gemini":
         text = call_gemini(api_key, model, prompt)
     elif args.provider == "openai":
         text = call_openai(api_key, model, prompt)
+    elif args.provider == "openai_compat":
+        text = call_openai_compatible(api_key, model, prompt, base_url)
     else:
         text = call_claude(api_key, model, prompt)
     rows = parse_md_table(text)
