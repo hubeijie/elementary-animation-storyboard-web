@@ -35,8 +35,101 @@
       --hive-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='90' viewBox='0 0 52 90'%3E%3Cg fill='none' stroke='%23b8893d' stroke-width='0.85' stroke-opacity='0.22'%3E%3Cpath d='M26 1.2 48.2 14.1v25.8L26 52.9 3.8 39.9V14.1z'/%3E%3Cpath d='M26 37.1 48.2 50v25.8L26 88.8 3.8 75.9V50z'/%3E%3Cpath d='M52 19.1 74.2 32v25.8L52 70.7 29.8 57.8V32z' transform='translate(-26 0)'/%3E%3C/g%3E%3C/svg%3E");
       --hive-pattern-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='90' viewBox='0 0 52 90'%3E%3Cg fill='none' stroke='%23d4b87a' stroke-width='0.5' stroke-opacity='0.1'%3E%3Cpath d='M26 1.2 48.2 14.1v25.8L26 52.9 3.8 39.9V14.1z'/%3E%3Cpath d='M26 37.1 48.2 50v25.8L26 88.8 3.8 75.9V50z'/%3E%3Cpath d='M52 19.1 74.2 32v25.8L52 70.7 29.8 57.8V32z' transform='translate(-26 0)'/%3E%3C/g%3E%3C/svg%3E");
     }
+    @keyframes hive-bg-rise {
+      from {
+        background-position: 0 0, 26px 45px, 0 0;
+      }
+      to {
+        background-position: 0 -90px, 26px -45px, 0 0;
+      }
+    }
+    @keyframes honey-drip-flow {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 240px 0;
+      }
+    }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    .cursor-fx {
+      display: none;
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2147483646;
+      overflow: hidden;
+    }
+    html.has-custom-cursor .cursor-fx {
+      display: block;
+    }
+    html.has-custom-cursor,
+    html.has-custom-cursor body {
+      cursor: none !important;
+    }
+    html.has-custom-cursor #steps-bar > span,
+    html.has-custom-cursor textarea,
+    html.has-custom-cursor input[type="text"],
+    html.has-custom-cursor input[type="password"],
+    html.has-custom-cursor select,
+    html.has-custom-cursor .file-row label.pick,
+    html.has-custom-cursor button:not(:disabled),
+    html.has-custom-cursor details.sub summary,
+    html.has-custom-cursor a {
+      cursor: none !important;
+    }
+    html.has-custom-cursor button:disabled {
+      cursor: not-allowed !important;
+    }
+    .cursor-fx__cell {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .cursor-fx__cell svg {
+      display: block;
+      margin: -28px 0 0 -28px;
+      width: 56px;
+      height: 56px;
+      overflow: visible;
+    }
+    .cursor-fx__hex-fill {
+      fill: rgba(255, 253, 248, 0.26);
+      stroke: none;
+    }
+    .cursor-fx__hex-edge {
+      fill: none;
+      stroke: url(#cursor-fx-hex-grad);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 36 96;
+      animation: cursor-fx-hex-stream 2.85s linear infinite;
+    }
+    @keyframes cursor-fx-hex-stream {
+      to {
+        stroke-dashoffset: -132;
+      }
+    }
+    .cursor-fx__nectar {
+      fill: url(#cursor-fx-nectar-grad);
+      filter: drop-shadow(0 2px 4px rgba(166, 124, 61, 0.4));
+      transform-origin: 26px 23px;
+      animation: cursor-fx-nectar 2.1s ease-in-out infinite;
+    }
+    @keyframes cursor-fx-nectar {
+      0%, 100% {
+        transform: scale(1.42) translateY(0);
+      }
+      50% {
+        transform: scale(1.55) translateY(1px);
+      }
+    }
     body {
       margin: 0;
       font-family: var(--font);
@@ -57,6 +150,15 @@
       background-size: 52px 90px, 52px 90px, 22px 22px;
       background-position: 0 0, 26px 45px, 0 0;
       z-index: 0;
+      animation: hive-bg-rise 10s linear infinite;
+      will-change: background-position;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body::before,
+      header.site-head::before {
+        animation: none !important;
+      }
+      .cursor-fx { display: none !important; }
     }
     .wrap {
       position: relative;
@@ -169,8 +271,9 @@
       background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%2226%22%20viewBox%3D%220%200%20200%2026%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3c8%22%20stop-opacity%3D%220.75%22%2F%3E%3Cstop%20offset%3D%220.45%22%20stop-color%3D%22%23f0c14d%22%20stop-opacity%3D%220.55%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d4a02a%22%20stop-opacity%3D%220.4%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22shine%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220.35%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C4.5%20C188%2C4.5%20182%2C18%20172%2C11%20C162%2C5%20154%2C5%20146%2C12%20C138%2C20%20128%2C18%20120%2C10%20C112%2C4%20104%2C4%2096%2C11%20C88%2C19%2078%2C18%2070%2C10%20C62%2C4%2054%2C4%2046%2C12%20C38%2C20%2028%2C18%2020%2C10%20C12%2C4%204%2C5%200%2C4.5%20Z%22%2F%3E%3Cpath%20fill%3D%22url%28%23shine%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C3%20L0%2C3%20Z%22%2F%3E%3C%2Fsvg%3E");
       background-repeat: repeat-x;
       background-size: 240px 100%;
-      background-position: top center;
+      background-position: 0 0;
       filter: drop-shadow(0 3px 4px rgba(160, 110, 45, 0.12));
+      animation: honey-drip-flow 22s linear infinite;
     }
     /* 底缘淡蜜色收边（与顶带呼应） */
     header.site-head::after {
@@ -382,7 +485,7 @@
       background: var(--card-edge);
       color: var(--muted);
       border: 2px dashed var(--border);
-      cursor: default;
+      cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       display: inline-flex;
       align-items: center;
@@ -490,6 +593,7 @@
       background: #fffefb;
       color: var(--text);
       transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: text;
     }
     textarea:focus,
     input:focus,
@@ -644,6 +748,63 @@
   </style>
 </head>
 <body>
+  <div id="cursor-fx" class="cursor-fx" aria-hidden="true">
+    <div class="cursor-fx__cell">
+      <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="cursor-fx-hex-grad" x1="2" y1="6" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fffef5"/>
+            <stop offset="14%" stop-color="#fff0c2"/>
+            <stop offset="32%" stop-color="#ffd56a"/>
+            <stop offset="48%" stop-color="#e8a82e"/>
+            <stop offset="64%" stop-color="#c6862e"/>
+            <stop offset="82%" stop-color="#ffdf9a"/>
+            <stop offset="100%" stop-color="#8f5f1c"/>
+          </linearGradient>
+          <filter
+            id="cursor-fx-edge-bloom"
+            color-interpolation-filters="sRGB"
+            x="-70%"
+            y="-70%"
+            width="240%"
+            height="240%"
+          >
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b"/>
+            <feColorMatrix
+              in="b"
+              type="matrix"
+              values="1 0 0 0 0.12
+                      0 1 0 0 0.06
+                      0 0 1 0 0
+                      0 0 0 0.85 0"
+              result="warm"
+            />
+            <feGaussianBlur in="warm" stdDeviation="2.4" result="b2"/>
+            <feMerge>
+              <feMergeNode in="b2"/>
+              <feMergeNode in="warm"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <radialGradient id="cursor-fx-nectar-grad" cx="35%" cy="30%" r="75%">
+            <stop stop-color="#fffef8"/>
+            <stop offset="0.55" stop-color="#f0c14d"/>
+            <stop offset="1" stop-color="#b8832e"/>
+          </radialGradient>
+        </defs>
+        <polygon class="cursor-fx__hex-fill" points="26,3.5 46.5,15.5 46.5,36.5 26,48.5 5.5,36.5 5.5,15.5"/>
+        <polygon
+          class="cursor-fx__hex-edge"
+          filter="url(#cursor-fx-edge-bloom)"
+          points="26,3.5 46.5,15.5 46.5,36.5 26,48.5 5.5,36.5 5.5,15.5"
+        />
+        <path
+          class="cursor-fx__nectar"
+          d="M26 17.2c-1.9 2.8-3.4 5.2-3.4 7.6 0 2.5 1.5 4.5 3.4 4.5s3.4-2 3.4-4.5c0-2.4-1.5-4.8-3.4-7.6z"
+        />
+      </svg>
+    </div>
+  </div>
   <div class="wrap">
     <div class="top-stack">
     <header class="site-head">
@@ -679,7 +840,7 @@
       </div>
     </header>
     <div class="banner">
-      <p><strong>方式一（本页）：</strong>梗概拆镜并嵌入教研「逐字稿 / 动效」需大模型。本页<strong>不上传</strong>你的内容；可选 <strong>Gemini / OpenAI / Claude</strong> 直连，或 <strong>OpenAI 兼容</strong>（国内 DeepSeek、通义兼容模式、Moonshot 等，自填 Base URL）；海外官方常被 CORS 拦截，国内是否允许浏览器直连因平台而异，失败请用「复制提示词」或 <code>梗概转脚本/generate_full_script.py</code>。</p>
+      <p><strong>方式一（本页）：</strong>梗概拆镜并嵌入教研「逐字稿 / 动效」需大模型。本页<strong>不上传</strong>你的内容；可选 <strong>Gemini / OpenAI / Claude</strong> 直连（OpenAI、Claude 常被浏览器 CORS 拦截，失败请用「复制提示词」或 <code>梗概转脚本/generate_full_script.py</code>）。</p>
       <p><strong>方式二（转回Cursor）：</strong>将下载好的SKILL解压到 <code>~/.cursor/skills/elementary-animation-storyboard-script/</code>，该文件夹<strong>根层</strong>即 <code>SKILL.md</code> 与 <code>reference.md</code>；重启或新开窗口后，对话里写「按 elementary-animation-storyboard-script 规范写脚本」并上传动效说明和梗概即可在 Cursor 内产出，无需本页。</p>
     </div>
     </div>
@@ -739,35 +900,19 @@
         <p class="hint">生成结果须为 Markdown 五列表；解析后写入「脚本表·完整剧情」，教研各表以「教研·」前缀附在同一工作簿中备查。</p>
 
         <h3>方式 A：浏览器调用 API</h3>
-        <p class="hint api-cors-hint">可选 <strong>Gemini</strong>、<strong>OpenAI</strong>、<strong>Claude</strong>，或 <strong>OpenAI 兼容（国内/自建）</strong>。海外官方接口<strong>常被浏览器 CORS 拦截</strong>；国内兼容地址是否允许浏览器直连以各平台说明为准，失败请用「复制提示词」或本地 Python。</p>
+        <p class="hint api-cors-hint">可选 <strong>Gemini</strong>、<strong>OpenAI</strong>、<strong>Claude</strong>。OpenAI / Claude 官方接口<strong>多数浏览器会因 CORS 失败</strong>，属正常现象；请改用「复制提示词」或本地 Python（无 CORS）。</p>
         <div class="grid2">
           <label class="lbl">服务商
             <select id="api-provider" autocomplete="off">
               <option value="gemini">Google Gemini</option>
               <option value="openai">OpenAI</option>
               <option value="claude">Anthropic Claude</option>
-              <option value="openai_compat">OpenAI 兼容（国内 DeepSeek / 通义等）</option>
             </select>
           </label>
-          <label class="lbl" id="api-model-label-select">模型
+          <label class="lbl">模型
             <select id="api-model" autocomplete="off"></select>
           </label>
-          <label class="lbl" id="api-model-label-text" style="display:none">模型名
-            <input type="text" id="api-model-text" list="openai-compat-model-suggestions" autocomplete="off" placeholder="按服务商文档填写，如 deepseek-chat" />
-            <datalist id="openai-compat-model-suggestions">
-              <option value="deepseek-chat"></option>
-              <option value="deepseek-reasoner"></option>
-              <option value="qwen-plus"></option>
-              <option value="qwen-turbo"></option>
-              <option value="moonshot-v1-8k"></option>
-              <option value="glm-4-flash"></option>
-            </datalist>
-          </label>
         </div>
-        <label class="lbl" id="api-base-url-wrap" style="display:none;margin-top:0.65rem">OpenAI 兼容 · Base URL（须与文档一致，请求将发往：Base + <code>/chat/completions</code>）
-          <input type="text" id="api-base-url" autocomplete="off" placeholder="https://api.deepseek.com/v1" />
-        </label>
-        <p class="hint" id="api-base-url-hint" style="display:none;margin-top:0.35rem">示例：DeepSeek <code>https://api.deepseek.com/v1</code>；通义兼容模式 <code>https://dashscope.aliyuncs.com/compatible-mode/v1</code>；Moonshot <code>https://api.moonshot.cn/v1</code>。</p>
         <label class="lbl" style="margin-top:0.75rem">API Key（仅本页内存，刷新即无）
           <input type="password" id="api-key" autocomplete="off" placeholder="" />
         </label>
@@ -836,7 +981,6 @@
   function refillApiModels() {
     if (!$("api-provider") || !$("api-model") || !$("api-key")) return;
     var p = $("api-provider").value;
-    var isCompat = p === "openai_compat";
     var sel = $("api-model");
     var list = API_MODELS[p] || [];
     sel.innerHTML = "";
@@ -849,14 +993,9 @@
     var ph = {
       gemini: "Google AI Studio 项目 Key",
       openai: "sk-…（OpenAI）",
-      claude: "sk-ant-…（Anthropic）",
-      openai_compat: "各平台控制台发放的 API Key"
+      claude: "sk-ant-…（Anthropic）"
     };
     $("api-key").placeholder = ph[p] || "";
-    if ($("api-model-label-select")) $("api-model-label-select").style.display = isCompat ? "none" : "";
-    if ($("api-model-label-text")) $("api-model-label-text").style.display = isCompat ? "" : "none";
-    if ($("api-base-url-wrap")) $("api-base-url-wrap").style.display = isCompat ? "" : "none";
-    if ($("api-base-url-hint")) $("api-base-url-hint").style.display = isCompat ? "block" : "none";
   }
 
   function extractLlmTextOk(provider, j) {
@@ -865,10 +1004,10 @@
       if (!parts || !parts[0] || !parts[0].text) throw new Error("模型未返回文本，可能被安全策略拦截。");
       return parts[0].text;
     }
-    if (provider === "openai" || provider === "openai_compat") {
-      if (!j.choices || !j.choices[0] || !j.choices[0].message) throw new Error("OpenAI 兼容接口未返回有效 completion。");
+    if (provider === "openai") {
+      if (!j.choices || !j.choices[0] || !j.choices[0].message) throw new Error("OpenAI 未返回有效 completion。");
       var t = j.choices[0].message.content;
-      if (t == null || t === "") throw new Error("接口返回空内容。");
+      if (t == null || t === "") throw new Error("OpenAI 返回空内容。");
       return String(t);
     }
     if (provider === "claude") {
@@ -1138,23 +1277,7 @@
     $("llm-api-err").style.display = "none";
     var key = $("api-key").value.trim();
     var provider = $("api-provider").value;
-    var model =
-      provider === "openai_compat"
-        ? ($("api-model-text") && $("api-model-text").value.trim()) || ""
-        : $("api-model").value;
-    if (provider === "openai_compat") {
-      var baseRaw = ($("api-base-url") && $("api-base-url").value.trim()) || "";
-      if (!baseRaw) {
-        $("llm-api-err").textContent = "请填写 OpenAI 兼容接口的 Base URL。";
-        $("llm-api-err").style.display = "block";
-        return;
-      }
-      if (!model) {
-        $("llm-api-err").textContent = "请填写模型名（见各服务商文档）。";
-        $("llm-api-err").style.display = "block";
-        return;
-      }
-    }
+    var model = $("api-model").value;
     if (!key) {
       $("llm-api-err").textContent = "请填写 API Key，或使用「复制提示词」。";
       $("llm-api-err").style.display = "block";
@@ -1200,22 +1323,6 @@
           max_tokens: 8192
         })
       };
-    } else if (provider === "openai_compat") {
-      var base = $("api-base-url").value.trim().replace(/\/+$/, "");
-      url = base + "/chat/completions";
-      init = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + key
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.35,
-          max_tokens: 8192
-        })
-      };
     } else {
       url = "https://api.anthropic.com/v1/messages";
       init = {
@@ -1246,7 +1353,7 @@
               res.statusText ||
               "请求失败";
             throw new Error(
-              msg + "（若出现网络/CORS 错误，请用「复制提示词」或 Python：梗概转脚本/generate_full_script.py）"
+              msg + "（OpenAI/Claude 若出现网络/CORS 错误，请用「复制提示词」或 Python：梗概转脚本/generate_full_script.py）"
             );
           }
           return extractLlmTextOk(provider, j);
@@ -1347,6 +1454,25 @@
     });
   });
 })();
+  </script>
+  <script>
+  (function () {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var root = document.documentElement;
+    var fx = document.getElementById("cursor-fx");
+    if (!fx) return;
+    var cell = fx.querySelector(".cursor-fx__cell");
+    if (!cell) return;
+    root.classList.add("has-custom-cursor");
+    window.addEventListener(
+      "pointermove",
+      function (e) {
+        cell.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
+      },
+      { passive: true }
+    );
+  })();
   </script>
 </body>
 </html>

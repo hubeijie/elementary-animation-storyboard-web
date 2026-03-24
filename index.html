@@ -35,8 +35,102 @@
       --hive-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='90' viewBox='0 0 52 90'%3E%3Cg fill='none' stroke='%23b8893d' stroke-width='0.85' stroke-opacity='0.22'%3E%3Cpath d='M26 1.2 48.2 14.1v25.8L26 52.9 3.8 39.9V14.1z'/%3E%3Cpath d='M26 37.1 48.2 50v25.8L26 88.8 3.8 75.9V50z'/%3E%3Cpath d='M52 19.1 74.2 32v25.8L52 70.7 29.8 57.8V32z' transform='translate(-26 0)'/%3E%3C/g%3E%3C/svg%3E");
       --hive-pattern-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='90' viewBox='0 0 52 90'%3E%3Cg fill='none' stroke='%23d4b87a' stroke-width='0.5' stroke-opacity='0.1'%3E%3Cpath d='M26 1.2 48.2 14.1v25.8L26 52.9 3.8 39.9V14.1z'/%3E%3Cpath d='M26 37.1 48.2 50v25.8L26 88.8 3.8 75.9V50z'/%3E%3Cpath d='M52 19.1 74.2 32v25.8L52 70.7 29.8 57.8V32z' transform='translate(-26 0)'/%3E%3C/g%3E%3C/svg%3E");
     }
+    @keyframes hive-bg-rise {
+      from {
+        background-position: 0 0, 26px 45px, 0 0;
+      }
+      to {
+        background-position: 0 -90px, 26px -45px, 0 0;
+      }
+    }
+    @keyframes honey-drip-flow {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 240px 0;
+      }
+    }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    /* 自定义光标：蜂巢六边形 + 描边蜜流 + 中心蜜滴 */
+    .cursor-fx {
+      display: none;
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2147483646;
+      overflow: hidden;
+    }
+    html.has-custom-cursor .cursor-fx {
+      display: block;
+    }
+    html.has-custom-cursor,
+    html.has-custom-cursor body {
+      cursor: none !important;
+    }
+    html.has-custom-cursor #steps-bar > span,
+    html.has-custom-cursor textarea,
+    html.has-custom-cursor input[type="text"],
+    html.has-custom-cursor input[type="password"],
+    html.has-custom-cursor select,
+    html.has-custom-cursor .file-row label.pick,
+    html.has-custom-cursor button:not(:disabled),
+    html.has-custom-cursor details.sub summary,
+    html.has-custom-cursor a {
+      cursor: none !important;
+    }
+    html.has-custom-cursor button:disabled {
+      cursor: not-allowed !important;
+    }
+    .cursor-fx__cell {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .cursor-fx__cell svg {
+      display: block;
+      margin: -28px 0 0 -28px;
+      width: 56px;
+      height: 56px;
+      overflow: visible;
+    }
+    .cursor-fx__hex-fill {
+      fill: rgba(255, 253, 248, 0.26);
+      stroke: none;
+    }
+    .cursor-fx__hex-edge {
+      fill: none;
+      stroke: url(#cursor-fx-hex-grad);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 36 96;
+      animation: cursor-fx-hex-stream 2.85s linear infinite;
+    }
+    @keyframes cursor-fx-hex-stream {
+      to {
+        stroke-dashoffset: -132;
+      }
+    }
+    .cursor-fx__nectar {
+      fill: url(#cursor-fx-nectar-grad);
+      filter: drop-shadow(0 2px 4px rgba(166, 124, 61, 0.4));
+      transform-origin: 26px 23px;
+      animation: cursor-fx-nectar 2.1s ease-in-out infinite;
+    }
+    @keyframes cursor-fx-nectar {
+      0%, 100% {
+        transform: scale(1.42) translateY(0);
+      }
+      50% {
+        transform: scale(1.55) translateY(1px);
+      }
+    }
     body {
       margin: 0;
       font-family: var(--font);
@@ -57,6 +151,15 @@
       background-size: 52px 90px, 52px 90px, 22px 22px;
       background-position: 0 0, 26px 45px, 0 0;
       z-index: 0;
+      animation: hive-bg-rise 10s linear infinite;
+      will-change: background-position;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body::before,
+      header.site-head::before {
+        animation: none !important;
+      }
+      .cursor-fx { display: none !important; }
     }
     .wrap {
       position: relative;
@@ -169,8 +272,9 @@
       background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%2226%22%20viewBox%3D%220%200%20200%2026%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3c8%22%20stop-opacity%3D%220.75%22%2F%3E%3Cstop%20offset%3D%220.45%22%20stop-color%3D%22%23f0c14d%22%20stop-opacity%3D%220.55%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d4a02a%22%20stop-opacity%3D%220.4%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22shine%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220.35%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%23ffffff%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C4.5%20C188%2C4.5%20182%2C18%20172%2C11%20C162%2C5%20154%2C5%20146%2C12%20C138%2C20%20128%2C18%20120%2C10%20C112%2C4%20104%2C4%2096%2C11%20C88%2C19%2078%2C18%2070%2C10%20C62%2C4%2054%2C4%2046%2C12%20C38%2C20%2028%2C18%2020%2C10%20C12%2C4%204%2C5%200%2C4.5%20Z%22%2F%3E%3Cpath%20fill%3D%22url%28%23shine%29%22%20d%3D%22M0%2C0%20L200%2C0%20L200%2C3%20L0%2C3%20Z%22%2F%3E%3C%2Fsvg%3E");
       background-repeat: repeat-x;
       background-size: 240px 100%;
-      background-position: top center;
+      background-position: 0 0;
       filter: drop-shadow(0 3px 4px rgba(160, 110, 45, 0.12));
+      animation: honey-drip-flow 22s linear infinite;
     }
     /* 底缘淡蜜色收边（与顶带呼应） */
     header.site-head::after {
@@ -382,7 +486,7 @@
       background: var(--card-edge);
       color: var(--muted);
       border: 2px dashed var(--border);
-      cursor: default;
+      cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       display: inline-flex;
       align-items: center;
@@ -490,6 +594,7 @@
       background: #fffefb;
       color: var(--text);
       transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: text;
     }
     textarea:focus,
     input:focus,
@@ -644,6 +749,63 @@
   </style>
 </head>
 <body>
+  <div id="cursor-fx" class="cursor-fx" aria-hidden="true">
+    <div class="cursor-fx__cell">
+      <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="cursor-fx-hex-grad" x1="2" y1="6" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fffef5"/>
+            <stop offset="14%" stop-color="#fff0c2"/>
+            <stop offset="32%" stop-color="#ffd56a"/>
+            <stop offset="48%" stop-color="#e8a82e"/>
+            <stop offset="64%" stop-color="#c6862e"/>
+            <stop offset="82%" stop-color="#ffdf9a"/>
+            <stop offset="100%" stop-color="#8f5f1c"/>
+          </linearGradient>
+          <filter
+            id="cursor-fx-edge-bloom"
+            color-interpolation-filters="sRGB"
+            x="-70%"
+            y="-70%"
+            width="240%"
+            height="240%"
+          >
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b"/>
+            <feColorMatrix
+              in="b"
+              type="matrix"
+              values="1 0 0 0 0.12
+                      0 1 0 0 0.06
+                      0 0 1 0 0
+                      0 0 0 0.85 0"
+              result="warm"
+            />
+            <feGaussianBlur in="warm" stdDeviation="2.4" result="b2"/>
+            <feMerge>
+              <feMergeNode in="b2"/>
+              <feMergeNode in="warm"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <radialGradient id="cursor-fx-nectar-grad" cx="35%" cy="30%" r="75%">
+            <stop stop-color="#fffef8"/>
+            <stop offset="0.55" stop-color="#f0c14d"/>
+            <stop offset="1" stop-color="#b8832e"/>
+          </radialGradient>
+        </defs>
+        <polygon class="cursor-fx__hex-fill" points="26,3.5 46.5,15.5 46.5,36.5 26,48.5 5.5,36.5 5.5,15.5"/>
+        <polygon
+          class="cursor-fx__hex-edge"
+          filter="url(#cursor-fx-edge-bloom)"
+          points="26,3.5 46.5,15.5 46.5,36.5 26,48.5 5.5,36.5 5.5,15.5"
+        />
+        <path
+          class="cursor-fx__nectar"
+          d="M26 17.2c-1.9 2.8-3.4 5.2-3.4 7.6 0 2.5 1.5 4.5 3.4 4.5s3.4-2 3.4-4.5c0-2.4-1.5-4.8-3.4-7.6z"
+        />
+      </svg>
+    </div>
+  </div>
   <div class="wrap">
     <div class="top-stack">
     <header class="site-head">
@@ -1347,6 +1509,25 @@
     });
   });
 })();
+  </script>
+  <script>
+  (function () {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var root = document.documentElement;
+    var fx = document.getElementById("cursor-fx");
+    if (!fx) return;
+    var cell = fx.querySelector(".cursor-fx__cell");
+    if (!cell) return;
+    root.classList.add("has-custom-cursor");
+    window.addEventListener(
+      "pointermove",
+      function (e) {
+        cell.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
+      },
+      { passive: true }
+    );
+  })();
   </script>
 </body>
 </html>
